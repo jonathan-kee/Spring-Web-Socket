@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+	<title>Spring Boot Messaging with Web Sockets</title>
+	<link rel="stylesheet" href="/webjars/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/webjars/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+</head>
+<body>
+	<div class="container theme-showcase" role="main">
+		<div class="jumbotron">
+        		<h1>Spring Boot Messaging with Web Sockets</h1>
+        		<p>A simple example for using Web Sockets with Spring Boot.</p>
+      	</div>
+	
+		<div class="page-header">
+        		<h1>Chat Room</h1>
+      	</div>
+      	<div class="row">
+        		<div class="col-sm-4">
+				 <div class="panel panel-success">
+            			<div class="panel-heading">
+              			<h3 class="panel-title">Messages:</h3>
+            			</div>
+            			<div class="panel-body">
+            				
+              			<div class="form-group">
+              				<label for="user">User</label><br/>
+              				<input type="text" id="user" value="anonymous"/>
+              			</div>
+              			<div class="form-group">
+              				<label for="message">Message</label><br/>
+              				<textarea id="message">You message here...</textarea>
+              			
+              			</div>
+              			<button id="send">Send</button>
+              			
+            			</div>
+          		 </div>
+			</div>
+
+			<div class="col-sm-4">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						<h3 class="panel-title">PrivateMessages:</h3>
+					</div>
+					<div class="panel-body">
+						<div class="form-group">
+							<label for="to">To</label><br/>
+							<input type="text" id="to" value="anonymous"/>
+						</div>
+						<div class="form-group">
+							<label for="user2">User</label><br/>
+							<input type="text" id="user2" value="anonymous"/>
+						</div>
+						<div class="form-group">
+							<label for="message2">Message</label><br/>
+							<textarea id="message2">You message here...</textarea>
+
+						</div>
+						<button id="send2">Send</button>
+
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-8">
+				<div class="panel panel-primary">
+  					<div class="panel-heading">
+    						<h3 class="panel-title">Messages:</h3>
+  					</div>
+				  	<div class="panel-body">
+				    		<div id="output">
+						</div>
+				  	</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/webjars/jquery/3.1.1/jquery.min.js"></script>
+	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+	
+	<script>
+		
+		$(function(){
+			var socket = new SockJS('http://localhost:8080/stomp-endpoint');
+		    var stompClient = Stomp.over(socket);
+
+			// SUBSCRIBE frame
+		    stompClient.connect({}, function (frame) {
+		    	console.log('Connected: ' + frame);
+		    	
+		    	stompClient.subscribe('/subject/chat-room-number2', function (data) {
+		        		console.log('>>>>> ' + data);
+		        		var json = JSON.parse(data.body);
+		        		$("#output").append("<span><strong>" + json.user + "</strong>: <em>" + json.message +"</em><em>"+ ' around ' + "</em><em>"+ json.sent+ "</em></span><br/>");
+		        });
+
+				// Any destination that starts with /user is going to user destinations
+				// For example when a user attempts to subscribe to "/user/queue/position-updates", the destination may be translated to "/queue/position-updatesi9oqdfzo" yielding a unique queue name that does not collide with any other user attempting to do the same.
+				// Subsequently when messages are sent to "/user/{username}/queue/position-updates", the destination is translated to "/queue/position-updatesi9oqdfzo".
+				stompClient.subscribe('/user/queue/storedMessages', function (data) {
+					console.log('>>>>> ' + data);
+					var json = JSON.parse(data.body);
+					$("#output").append("<span><strong>" + json.user + "</strong>: <em>" + json.message +"</em><em>"+ ' around ' + "</em><em>"+ json.sent+ "</em></span><br/>");
+				});
+
+				stompClient.subscribe('/user/queue/privateMessages', function (data) {
+					console.log('>>>>> ' + data);
+					var json = JSON.parse(data.body);
+					$("#output").append("<span><strong>" + json.user + "</strong>: <em>" + json.message +"</em><em>"+ ' around ' + "</em><em>"+ json.sent+ "</em></span><br/>");
+				});
+
+			});
+
+			// SEND frame
+		    $("#send").click(function(){
+				var chatMessage = {}
+				chatMessage["user"] = $("#user").val();
+				chatMessage["message"] = $("#message").val();
+				// Any destination that starts with /app is forward to controllers
+				stompClient.send("/app/chat-room2",{},JSON.stringify(chatMessage));
+			});
+
+			// SEND frame
+			$("#send2").click(function(){
+				var chatMessage = {}
+				chatMessage["user"] = $("#user2").val();
+				chatMessage["message"] = $("#message2").val();
+				// Any destination that starts with /app is forward to controllers
+				stompClient.send("/user/"+$("#to").val()+"/queue/privateMessages", {}, JSON.stringify(chatMessage));
+			});
+		});
+	</script>
+</body>
+</html>
