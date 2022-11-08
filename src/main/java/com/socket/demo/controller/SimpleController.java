@@ -9,12 +9,10 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class SimpleController {
-
-    private SimpMessagingTemplate messageSender;
+    private final SimpMessagingTemplate messageSender;
 
     // Somehow Spring knows there's a dependency for SimpMessagingTemplate even though I never created code related to it!
-    @Autowired
-    SimpleController(SimpMessagingTemplate messageSender){
+    public SimpleController(SimpMessagingTemplate messageSender){
         this.messageSender = messageSender;
     }
 

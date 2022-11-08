@@ -13,13 +13,11 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 // Need to annotate for Spring it to work
 @Controller
 public class Connect implements ApplicationListener<SessionSubscribeEvent> {
-
-    SimpMessagingTemplate messageSender;
-    ChatRoom chatRoom;
+    private final SimpMessagingTemplate messageSender;
+    private final ChatRoom chatRoom;
 
     // Somehow Spring knows there's a dependency for SimpMessagingTemplate even though I never created code related to it!
-    @Autowired
-    Connect(SimpMessagingTemplate messageSender){
+    public Connect(SimpMessagingTemplate messageSender){
         this.messageSender = messageSender;
         this.chatRoom = new ChatRoom(1,"nicompoop!");
     }

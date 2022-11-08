@@ -2,6 +2,7 @@ package com.socket.demo;
 
 import com.socket.demo.auth.RandomUsernameHandshakeHandler;
 import com.socket.demo.auth.UserHandshakeHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -9,12 +10,18 @@ import org.springframework.web.socket.config.annotation.*;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final RandomUsernameHandshakeHandler randomUsernameHandshakeHandler;
+
+    public WebSocketConfig(RandomUsernameHandshakeHandler randomUsernameHandshakeHandler) {
+        this.randomUsernameHandshakeHandler = randomUsernameHandshakeHandler;
+    }
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/stomp-endpoint")
                 // https://www.youtube.com/watch?v=LdQY-OUM2mk&ab_channel=LiliumCode
                 //.setHandshakeHandler(new UserHandshakeHandler())
-                .setHandshakeHandler(new RandomUsernameHandshakeHandler())
+                .setHandshakeHandler(randomUsernameHandshakeHandler)
                 // ^ This wierd handmade UserHandshakeHandler can be fixed by Spring Security I think
                 .withSockJS();
     }

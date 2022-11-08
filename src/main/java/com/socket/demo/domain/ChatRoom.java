@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatRoom {
-    int id;
-    String name;
-    String password;
-    List<ChatMessage> chatMessages;
-    List<String> users; // Yeah I know, will change String to something else in future!
+    private final int id;
+    private final String name;
+    private String password;
+    private final List<ChatMessage> chatMessages;
+    private List<String> users; // Yeah I know, will change String to something else in future!
 
     public ChatRoom(int id, String name) {
         chatMessages = new ArrayList<>();

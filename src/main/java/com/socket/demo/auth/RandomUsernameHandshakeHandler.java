@@ -2,6 +2,7 @@ package com.socket.demo.auth;
 
 import com.sun.security.auth.UserPrincipal;
 import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
@@ -28,11 +29,8 @@ enum Nouns {
 }
 
 class UsernameGenerator{
-    private Adjectives[] adjectives = Adjectives.values();
-    private Adjectives adjective = adjectives[new Random().nextInt(adjectives.length)];
-
-    private Nouns[] nouns = Nouns.values();
-    private Nouns noun = nouns[new Random().nextInt(nouns.length)];
+    private final Nouns noun = Nouns.values()[new Random().nextInt(Nouns.values().length)];
+    private final Adjectives adjective = Adjectives.values()[new Random().nextInt(Adjectives.values().length)];
 
     private Adjectives getAdjective() {
         return adjective;
@@ -47,6 +45,7 @@ class UsernameGenerator{
     }
 }
 
+@Component
 public class RandomUsernameHandshakeHandler extends DefaultHandshakeHandler {
 
     @Override
