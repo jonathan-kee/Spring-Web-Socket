@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.5'
+}
+
+apply plugin: "io.spring.dependency-management"
+
+group 'com.socket'
+
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket'
+    //implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
+    //implementation group: 'org.hibernate', name: 'hibernate-core'
+    implementation group: 'org.webjars', name: 'sockjs-client', version: '1.1.2'
+    implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3'
+    implementation group: 'org.webjars', name: 'bootstrap', version: '3.3.5'
+    implementation group: 'org.webjars', name: 'jquery', version: '3.1.1'
+    implementation "org.springdoc:springdoc-openapi-ui:1.6.6"
+
+    //implementation group: 'com.h2database', name: 'h2', version: '2.0.204'
+
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+}
